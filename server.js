@@ -7,14 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Servidor funcionando!');
-});
+const produtoRouter = require('./routes/produto');
+const movimentacoesRouter = require('./routes/movimentacoes');
 
-app.get('/produtos', (req, res) => {
-    res.send('Rota de produtos funcionando!');
-});
+app.use('/produtos', produtoRouter);
+app.use('/movimentacoes', movimentacoesRouter);
 
 app.listen(3000, () => {
-    console.log('Servidor funcionando na porta 3000');
+    console.log('API iniciada na porta 3000');
 });

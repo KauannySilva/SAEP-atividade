@@ -2,9 +2,6 @@ const express = require('express');
 const produtoRouter = express.Router();
 const db = require('../mysql');
 
-produtoRouter.get('/teste', (req, res) => {
-    res.send('Rota de produtos funcionando!');
-}); 
 
 produtoRouter.get('/', (req, res) => {
     db.query('SELECT *FROM produtos', (err, results) => {
