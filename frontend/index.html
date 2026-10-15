@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstoquePro | Gestão de estoque</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="api.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="#" data-page="inicio">
+                <span class="brand-mark">E</span>
+                <span>
+                    <strong>EstoquePro</strong>
+                    <small>GESTÃO INTELIGENTE</small>
+                </span>
+            </a>
+
+            <div class="nav-label">MENU PRINCIPAL</div>
+
+            <nav class="navigation">
+                <button class="nav-link active" data-page="inicio">
+                    <span class="nav-icon">⌂</span> Início
+                </button>
+                <button class="nav-link" data-page="produtos">
+                    <span class="nav-icon">▦</span> Produtos
+                </button>
+                <button class="nav-link" data-page="estoque">
+                    <span class="nav-icon">▤</span> Estoque atual
+                </button>
+                <button class="nav-link" data-page="movimentacoes">
+                    <span class="nav-icon">⇄</span> Movimentações
+                </button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="help-card">
+                    <span class="help-icon">?</span>
+                    <strong>Precisa de ajuda?</strong>
+                    <p>Confira se a API e o banco de dados estão conectados.</p>
+                </div>
+
+                <div class="user-chip">
+                    <span class="avatar">AD</span>
+                    <span>
+                        <strong>Administrador</strong>
+                        <small>Painel de controle</small>
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="mobile-menu" id="mobileMenu">☰</button>
+
+                <div class="breadcrumb">
+                    <span>Gestão</span>
+                    <span class="crumb-separator">/</span>
+                    <strong id="breadcrumbTitle">Início</strong>
+                </div>
+
+                <div class="topbar-right">
+                    <span class="status-dot"></span>
+                    <span id="connectionText">Verificando conexão</span>
+                    <span class="top-avatar">AD</span>
+                </div>
+            </header>
+
+            <div class="page-wrap">
+
+                <!-- INÍCIO -->
+                <section class="page active" id="page-inicio">
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">VISÃO GERAL</p>
+                            <h1>Bem-vindo ao EstoquePro</h1>
+                            <p class="muted">
+                                Acompanhe os indicadores e a movimentação do seu estoque.
+                            </p>
+                        </div>
+                        <button class="button button-primary" data-page="produtos">
+                            ＋ Novo produto
+                        </button>
+                    </div>
+
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon blue">▦</span>
+                                <span class="stat-label">Produtos cadastrados</span>
+                            </div>
+                            <strong class="stat-value" id="statProdutos">—</strong>
+                            <span class="stat-foot">Itens no cadastro</span>
+                        </article>
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon green">▤</span>
+                                <span class="stat-label">Unidades em estoque</span>
+                            </div>
+                            <strong class="stat-value" id="statUnidades">—</strong>
+                            <span class="stat-foot">Soma das quantidades cadastradas</span>
+                        </article>
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon purple">＄</span>
+                                <span class="stat-label">Valor do estoque</span>
+                            </div>
+                            <strong class="stat-value" id="statValor">—</strong>
+                            <span class="stat-foot">Quantidade × valor unitário</span>
+                        </article>
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon orange">!</span>
+                                <span class="stat-label">Estoque zerado</span>
+                            </div>
+                            <strong class="stat-value" id="statZerados">—</strong>
+                            <span class="stat-foot">Produtos sem unidades disponíveis</span>
+                        </article>
+                    </div>
+
+                    <div class="content-grid">
+                        <section class="panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <h2>Produtos cadastrados</h2>
+                                    <p>Visão rápida dos produtos.</p>
+                                </div>
+                                <button class="text-button" data-page="produtos">
+                                    Ver produtos →
+                                </button>
+                            </div>
+
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Produto</th>
+                                            <th>Categoria</th>
+                                            <th>Quantidade</th>
+                                            <th>Valor unitário</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="homeProducts">
+                                        <tr>
+                                            <td colspan="4" class="empty-cell">
+                                                Carregando produtos...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <h2>Acesso rápido</h2>
+                                    <p>Atalhos para tarefas comuns.</p>
+                                </div>
+                            </div>
+
+                            <div class="quick-actions">
+                                <button class="quick-action" data-page="produtos">
+                                    <span class="quick-icon blue">＋</span>
+                                    <span>
+                                        <strong>Cadastrar produto</strong>
+                                        <small>Adicionar item ao catálogo</small>
+                                    </span>
+                                    <span class="quick-arrow">›</span>
+                                </button>
+
+                                <button class="quick-action" data-page="movimentacoes">
+                                    <span class="quick-icon green">⇄</span>
+                                    <span>
+                                        <strong>Registrar movimentação</strong>
+                                        <small>Entrada ou saída de item</small>
+                                    </span>
+                                    <span class="quick-arrow">›</span>
+                                </button>
+
+                                <button class="quick-action" data-page="estoque">
+                                    <span class="quick-icon purple">▤</span>
+                                    <span>
+                                        <strong>Consultar estoque</strong>
+                                        <small>Conferir quantidades atuais</small>
+                                    </span>
+                                    <span class="quick-arrow">›</span>
+                                </button>
+                            </div>
+
+                            <div class="notice">
+                                <span>ⓘ</span>
+                                <p>
+                                    Os dados vêm da sua API local. Mantenha o servidor
+                                    Node.js e o MySQL em execução.
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- PRODUTOS -->
+                <section class="page" id="page-produtos">
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">CATÁLOGO</p>
+                            <h1>Produtos</h1>
+                            <p class="muted">
+                                Cadastre e consulte os produtos do seu sistema.
+                            </p>
+                        </div>
+                        <button class="button button-primary" id="openProductForm">
+                            ＋ Cadastrar produto
+                        </button>
+                    </div>
+
+                    <section class="panel form-panel" id="productFormPanel" hidden>
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Novo produto</h2>
+                                <p>Preencha os dados do produto abaixo.</p>
+                            </div>
+                            <button class="icon-button" id="closeProductForm">×</button>
+                        </div>
+
+                        <form id="productForm" class="form-grid">
+                            <label class="field field-span-2">
+                                Nome do produto
+                                <input name="nome" required maxlength="120"
+                                    placeholder="Ex.: Parafuso sextavado">
+                            </label>
+
+                            <label class="field">
+                                Categoria
+                                <input name="categoria" required
+                                    placeholder="Ex.: Ferramentas">
+                            </label>
+
+                            <label class="field">
+                                Quantidade inicial
+                                <input name="quantidade" type="number"
+                                    min="0" step="0.01" required value="0">
+                            </label>
+
+                            <label class="field">
+                                Valor unitário (R$)
+                                <input name="valor" type="number"
+                                    min="0.01" step="0.01" required placeholder="0,00">
+                            </label>
+
+                            <label class="field">
+                                Unidade de medida
+                                <input name="unidade_medida" required
+                                    placeholder="Ex.: unidade, kg, caixa">
+                            </label>
+
+                            <div class="form-actions field-span-2">
+                                <span class="form-message" id="productMessage"></span>
+                                <button type="button" class="button button-secondary"
+                                    id="cancelProduct">Cancelar</button>
+                                <button class="button button-primary" type="submit">
+                                    Salvar produto
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Lista de produtos</h2>
+                                <p id="productsCount">Consulte os itens cadastrados.</p>
+                            </div>
+
+                            <div class="search-box">
+                                <span>⌕</span>
+                                <input id="productSearch" placeholder="Buscar produto...">
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Produto</th>
+                                        <th>Categoria</th>
+                                        <th>Quantidade</th>
+                                        <th>Valor unitário</th>
+                                        <th>Unidade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable">
+                                    <tr><td colspan="6" class="empty-cell">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-footer">
+                            <span id="productsFooter">—</span>
+                            <button class="button button-secondary button-small"
+                                id="refreshProducts">↻ Atualizar</button>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- ESTOQUE -->
+                <section class="page" id="page-estoque">
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">CONTROLE</p>
+                            <h1>Estoque atual</h1>
+                            <p class="muted">
+                                Consulte a quantidade disponível de cada item.
+                            </p>
+                        </div>
+                        <button class="button button-secondary" id="refreshStock">
+                            ↻ Atualizar estoque
+                        </button>
+                    </div>
+
+                    <div class="inline-notice">
+                        ⓘ Esta tela consulta a rota <code>/produtos/vw_estoque</code>.
+                        As colunas dependem dos campos da sua view MySQL.
+                    </div>
+
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Posição do estoque</h2>
+                                <p>Dados retornados pela view de estoque.</p>
+                            </div>
+                            <div class="search-box">
+                                <span>⌕</span>
+                                <input id="stockSearch" placeholder="Buscar no estoque...">
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead id="stockHead">
+                                    <tr><th>Carregando...</th></tr>
+                                </thead>
+                                <tbody id="stockTable">
+                                    <tr><td class="empty-cell">Carregando estoque...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-footer">
+                            <span id="stockFooter">—</span>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- MOVIMENTAÇÕES -->
+                <section class="page" id="page-movimentacoes">
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">ENTRADAS E SAÍDAS</p>
+                            <h1>Movimentações</h1>
+                            <p class="muted">
+                                Registre entradas e saídas e acompanhe o histórico.
+                            </p>
+                        </div>
+                        <button class="button button-primary" id="openMovementForm">
+                            ＋ Nova movimentação
+                        </button>
+                    </div>
+
+                    <section class="panel form-panel" id="movementFormPanel" hidden>
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Registrar movimentação</h2>
+                                <p>Selecione o produto e informe o tipo e a quantidade.</p>
+                            </div>
+                            <button class="icon-button" id="closeMovementForm">×</button>
+                        </div>
+
+                        <form id="movementForm" class="form-grid">
+                            <label class="field field-span-2">
+                                Produto
+                                <select name="id_produtos" id="movementProduct" required>
+                                    <option value="">Carregando produtos...</option>
+                                </select>
+                            </label>
+
+                            <label class="field">
+                                Tipo de movimentação
+                                <select name="tipo" required>
+                                    <option value="entrada">Entrada</option>
+                                    <option value="saida">Saída</option>
+                                </select>
+                            </label>
+
+                            <label class="field">
+                                Quantidade
+                                <input name="quantidade" type="number"
+                                    min="0.01" step="0.01" required
+                                    placeholder="Informe a quantidade">
+                            </label>
+
+                            <div class="form-actions field-span-2">
+                                <span class="form-message" id="movementMessage"></span>
+                                <button type="button" class="button button-secondary"
+                                    id="cancelMovement">Cancelar</button>
+                                <button class="button button-primary" type="submit">
+                                    Salvar movimentação
+                                </button>
+                            </div>
+                        </form>
+
+                        <p class="form-hint">
+                            O backend atual registra o histórico, mas ainda precisa
+                            atualizar a quantidade do produto quando houver entrada
+                            ou saída.
+                        </p>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Histórico de movimentações</h2>
+                                <p>Registros retornados pela API.</p>
+                            </div>
+
+                            <div class="filter-row">
+                                <select id="movementFilter">
+                                    <option value="todas">Todas</option>
+                                    <option value="entrada">Entradas</option>
+                                    <option value="saida">Saídas</option>
+                                </select>
+
+                                <div class="search-box">
+                                    <span>⌕</span>
+                                    <input id="movementSearch" placeholder="Buscar...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Data</th>
+                                        <th>Produto (ID)</th>
+                                        <th>Tipo</th>
+                                        <th>Quantidade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="movementsTable">
+                                    <tr><td colspan="5" class="empty-cell">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-footer">
+                            <span id="movementsFooter">—</span>
+                            <button class="button button-secondary button-small"
+                                id="refreshMovements">↻ Atualizar</button>
+                        </div>
+                    </section>
+                </section>
+
+                <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+                <footer class="footer">
+                    EstoquePro <span>•</span> Sistema de controle de estoque
+                </footer>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
