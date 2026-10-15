@@ -7,22 +7,24 @@ produtoRouter.get('/', (req, res) => {
     db.query('SELECT *FROM produtos', (err, results) => {
         if (err) {
             res.status(500).json({
-                erro: "erro ao bsucar produto"})
- } else {
-                res.status(200).json(results);
-            }
- })
+                erro: "erro ao bsucar produto"
+            })
+        } else {
+            res.status(200).json(results);
+        }
+    })
 })
 produtoRouter.get('/vw_estoque', (req, res) => {
     db.query('SELECT * FROM vw_estoque', (err, results) => {
 
         if (err) {
             res.status(500).json({
-                error: "erro ao bsucar view"})
- } else {
-                res.status(200).json(results);
-            }
- })
+                error: "erro ao bsucar view"
+            })
+        } else {
+            res.status(200).json(results);
+        }
+    })
 })
 produtoRouter.post('/', (req, res) => {
     const { nome, quantidade, valor, categoria, unidade_medida } = req.body;
@@ -43,18 +45,19 @@ produtoRouter.post('/', (req, res) => {
     }
     db.query(
         'INSERT INTO produtos (nome, quantidade, valor, categoria, unidade_medida) VALUES(?, ?, ?, ?, ?)',
-    [nome, quantidade, valor, categoria, unidade_medida],
-    (err, results) => {
-        if (err) {
-            res.status(500).json({
-                erro: "Erro ao inserir produtos", detalhes: err });
- } else {
+        [nome, quantidade, valor, categoria, unidade_medida],
+        (err, results) => {
+            if (err) {
+                console.error('Erro ao inserir produto:', err);
+                res.status(500).json({ erro: 'Erro ao inserir produtos', detalhe: err.message });
+            } else {
                 res.status(201).json({
-                    message: "produto inserido com sucesso", id: results.insertId });
- }
- }
-            );
-        });
+                    message: "produto inserido com sucesso", id: results.insertId
+                });
+            }
+        }
+    );
+});
 produtoRouter.get('/total-categoria', (req, res) => {
     const querySQL = `
  SELECT categoria, 
@@ -66,11 +69,12 @@ ue
     db.query(querySQL, (err, results) => {
         if (err) {
             res.status(500).json({
-                error: "Erro ao gerar reatório por categoria", detalhes: err });
- } else {
-                res.status(200).json(results);
-            }
- });
+                error: "Erro ao gerar reatório por categoria", detalhes: err
+            });
+        } else {
+            res.status(200).json(results);
+        }
+    });
 });
 produtoRouter.get('/status-limites', (req, res) => {
 
@@ -93,19 +97,21 @@ ite Máximo Atingido (Lotado)'
     db.query(querySQL, (err, results) => {
         if (err) {
             res.status(500).json({
-                error: "Erro ao gerar relatório de limites", detalhes: err });
- } else {
-                res.status(200).json(results);
-            }
- });
+                error: "Erro ao gerar relatório de limites", detalhes: err
+            });
+        } else {
+            res.status(200).json(results);
+        }
+    });
 })
 produtoRouter.get('/relatorio-periodo', (req, res) => {
     const { dataInicio, dataFim } = req.query;
     if (!dataInicio || !dataFim) {
         return res.status(400).json({
-            error: "As datas inicial(dataInicio) e final(dataFim) são obrigatórias!" });
- }
- const querySQL = `
+            error: "As datas inicial(dataInicio) e final(dataFim) são obrigatórias!"
+        });
+    }
+    const querySQL = `
  SELECT 
  p.nome AS nome_produto,
  p.unidade_medida,
@@ -129,21 +135,22 @@ idas
  AND m.data_movimentacoes BETWEEN ? AND ?
  GROUP BY p.id, p.nome
  `;
-        db.query(querySQL, [dataInicio, dataFim], (err, results) => {
-            if (err) {
-                res.status(500).json({
-                    error: "Erro ao gerar relatório por período", detalhes: err });
- } else {
-                    res.status(200).json(results);
-                }
- });
-    })
+    db.query(querySQL, [dataInicio, dataFim], (err, results) => {
+        if (err) {
+            res.status(500).json({
+                error: "Erro ao gerar relatório por período", detalhes: err
+            });
+        } else {
+            res.status(200).json(results);
+        }
+    });
+})
 produtoRouter.get('/maior-saida', (req, res) => {
     const { dataInicio, dataFim } = req.query;
     if (!dataInicio || !dataFim) {
         return res.status(400).json({
             error: "As datas inicial e final são obrigatórias!"
- });
+        });
     }
     const querySQL = `
  SELECT
