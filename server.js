@@ -13,6 +13,8 @@ const movimentacoesRouter = require('./routes/movimentacoes');
 app.use('/produtos', produtoRouter);
 app.use('/movimentacoes', movimentacoesRouter);
 
-app.listen(3000, () => {
-    console.log('API iniciada na porta 3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`API iniciada na porta ${PORT}`);
 });
