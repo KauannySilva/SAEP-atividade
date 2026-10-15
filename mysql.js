@@ -1,6 +1,9 @@
 
 const mysql = require('mysql2');
 
+console.log('MYSQLHOST configurado:', Boolean(process.env.MYSQLHOST));
+console.log('MYSQLPORT configurado:', Boolean(process.env.MYSQLPORT));
+
 const connection = mysql.createConnection({
     host: process.env.MYSQLHOST || 'localhost',
     user: process.env.MYSQLUSER || 'root',
