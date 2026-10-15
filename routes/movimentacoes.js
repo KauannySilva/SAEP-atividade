@@ -15,8 +15,7 @@ movimentacoesRouter.get('/', (req, res) => {
 movimentacoesRouter.post('/', (req, res) => {
     const { tipo, quantidade, id_produtos } = req.body;
 
-    const data_movimentacoes = new Date().toISOString().spl
-    it('T')[0];
+    const data_movimentacoes = new Date().toISOString().split('T')[0];
     db.query(
         'INSERT INTO movimentacoes (data_movimentacoes, tipo, quantidade, id_produtos) VALUES(?, ?, ?, ?)',
     [data_movimentacoes, tipo, quantidade, id_produtos],
